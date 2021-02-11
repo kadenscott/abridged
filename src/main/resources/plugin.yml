@@ -2,5 +2,6 @@ name: Abridged
 version: @version@
 main: dev.kscott.abridged.Abridged
 api-version: 1.16
-description: Minecraft: (A Bridge)d.
+description: "Minecraft: (A Bridge)d."
 website: kscott.dev
+author: "kadenscott <kscottdev@gmail.com>"
