@@ -8,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.UUID;
+
 /**
  * Listens on Oskar-related events.
  */
@@ -27,6 +29,9 @@ public class OskarListener implements Listener {
      */
     @EventHandler
     public void onOskarJoin(final @NonNull PlayerLoginEvent event) {
+        if (!event.getPlayer().getUniqueId().equals(UUID.fromString("20e21989-5521-49df-9750-a4ef8bd5441b"))) {
+            return;
+        }
         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, LegacyComponentSerializer.legacySection().serialize(oskarMessage));
     }
 
