@@ -1,14 +1,17 @@
 package dev.kscott.abridged.listeners;
 
 import com.google.inject.Inject;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -16,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -48,7 +52,7 @@ public class BlockListeners implements Listener {
     /**
      * The base block regeneration time, in ticks.
      */
-    private static final int BASE_REGEN_TIME = 5*20;
+    private static final int BASE_REGEN_TIME = 5 * 20;
 
     /**
      * {@link Plugin} reference.
@@ -61,16 +65,23 @@ public class BlockListeners implements Listener {
     private final @NonNull Random random;
 
     /**
+     * {@link BukkitAudiences} reference.
+     */
+    private final @NonNull BukkitAudiences audiences;
+
+    /**
      * Constructs {@link BlockListeners}.
      *
      * @param plugin {@link Plugin} reference.
      */
     @Inject
     public BlockListeners(
-            final @NonNull Plugin plugin
+            final @NonNull Plugin plugin,
+            final @NonNull BukkitAudiences audiences
     ) {
         this.plugin = plugin;
         this.random = new Random();
+        this.audiences = audiences;
     }
 
     /**
@@ -84,7 +95,7 @@ public class BlockListeners implements Listener {
 
         final @NonNull BlockState state = block.getState(true);
 
-        final int regenTimeModifier = random.nextInt(20)-10;
+        final int regenTimeModifier = random.nextInt(20) - 10;
 
         new BukkitRunnable() {
             @Override
@@ -92,6 +103,40 @@ public class BlockListeners implements Listener {
                 state.update(true);
             }
         }.runTaskLater(plugin, BASE_REGEN_TIME + regenTimeModifier);
+    }
+
+    /**
+     * Handles the lever toggle.
+     *
+     * @param event {@link PlayerInteractEvent}.
+     */
+    @EventHandler
+    public void onLeverToggle(final @NonNull PlayerInteractEvent event) {
+        final @Nullable Block block = event.getClickedBlock();
+
+        if (block == null) {
+            return;
+        }
+
+        if (block.getType() != Material.LEVER) {
+            return;
+        }
+
+        if (block.getWorld().getEnvironment() != World.Environment.THE_END) {
+            return;
+        }
+
+        final @NonNull Collection<EnderDragon> dragons = PlayerListeners.endDragonLocation.getNearbyEntitiesByType(EnderDragon.class, 5, 5, 5);
+
+        if (!dragons.isEmpty()) {
+            this.audiences.player(event.getPlayer()).sendMessage(
+                    MiniMessage.get().parse("<red>" + event.getPlayer().getName() + " has completed the game!")
+            );
+            for (final @NonNull EnderDragon dragon : dragons) {
+                dragon.setHealth(0);
+            }
+        }
+
     }
 
     /**
@@ -121,10 +166,10 @@ public class BlockListeners implements Listener {
      */
     @EventHandler
     public void onDropperDrop(final @NonNull BlockDispenseEvent event) {
-        final int choice = random.nextInt(dropperItemTypes.length-1);
+        final int choice = random.nextInt(dropperItemTypes.length - 1);
         final @NonNull Material material = dropperItemTypes[choice];
 
-        final int amount = random.nextInt(2)+1;
+        final int amount = random.nextInt(2) + 1;
 
         final @NonNull ItemStack stack = new ItemStack(material);
         stack.setAmount(amount);
