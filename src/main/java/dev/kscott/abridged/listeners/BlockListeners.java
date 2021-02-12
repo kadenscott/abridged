@@ -28,8 +28,21 @@ public class BlockListeners implements Listener {
      */
     private static final Material[] dropperItemTypes = new Material[]{
             Material.BLAZE_ROD,
-            Material.ENDER_EYE,
-            Material.PORKCHOP
+            Material.BLAZE_ROD,
+            Material.BLAZE_ROD,
+            Material.BLAZE_ROD,
+            Material.ENDER_PEARL,
+            Material.ENDER_PEARL,
+            Material.ENDER_PEARL,
+            Material.ENDER_PEARL,
+            Material.ENDER_PEARL,
+            Material.PORKCHOP,
+            Material.PORKCHOP,
+            Material.PORKCHOP,
+            Material.PORKCHOP,
+            Material.PORKCHOP,
+            Material.DIAMOND_SWORD,
+            Material.DIAMOND_PICKAXE,
     };
 
     /**
