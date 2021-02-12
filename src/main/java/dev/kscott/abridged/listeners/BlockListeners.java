@@ -121,8 +121,8 @@ public class BlockListeners implements Listener {
      */
     @EventHandler
     public void onDropperDrop(final @NonNull BlockDispenseEvent event) {
-        final int choice = random.nextInt(dropperItemTypes.length);
-        final @NonNull Material material = dropperItemTypes[choice-1];
+        final int choice = random.nextInt(dropperItemTypes.length-1);
+        final @NonNull Material material = dropperItemTypes[choice];
 
         final int amount = random.nextInt(2)+1;
 
