@@ -3,6 +3,7 @@ package dev.kscott.abridged.listeners;
 import com.google.inject.Inject;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -12,7 +13,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -82,6 +85,34 @@ public class BlockListeners implements Listener {
         this.plugin = plugin;
         this.random = new Random();
         this.audiences = audiences;
+    }
+
+    /**
+     * Listens on chest open.
+     *
+     * @param event {@link PlayerInteractEvent}.
+     */
+    @EventHandler
+    public void onChestOpen(final @NonNull InventoryOpenEvent event) {
+        final @NonNull String title = event.getView().getTitle();
+
+        if (title.equals("Obsidian")) {
+            final @NonNull Inventory inventory = event.getInventory();
+
+            final @NonNull ItemStack itemStack = new ItemStack(Material.OBSIDIAN);
+            itemStack.setAmount(10);
+
+            inventory.addItem(itemStack);
+        } else if (title.equals("Lighter")) {
+            final @NonNull Inventory inventory = event.getInventory();
+
+            final @NonNull ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+
+            inventory.addItem(itemStack);
+        }
+
+
+
     }
 
     /**
