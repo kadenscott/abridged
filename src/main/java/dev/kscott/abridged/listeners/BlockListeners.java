@@ -3,7 +3,6 @@ package dev.kscott.abridged.listeners;
 import com.google.inject.Inject;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -98,6 +97,7 @@ public class BlockListeners implements Listener {
 
         if (title.equals("Obsidian")) {
             final @NonNull Inventory inventory = event.getInventory();
+            inventory.clear();
 
             final @NonNull ItemStack itemStack = new ItemStack(Material.OBSIDIAN);
             itemStack.setAmount(10);
@@ -105,12 +105,12 @@ public class BlockListeners implements Listener {
             inventory.addItem(itemStack);
         } else if (title.equals("Lighter")) {
             final @NonNull Inventory inventory = event.getInventory();
+            inventory.clear();
 
             final @NonNull ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
 
             inventory.addItem(itemStack);
         }
-
 
 
     }
