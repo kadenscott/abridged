@@ -8,12 +8,19 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Listens on {@link org.bukkit.event.player.PlayerEvent}s.
@@ -32,6 +39,20 @@ public class PlayerListeners implements Listener {
      */
     private static final @NonNull Location netherToWorldLocation = new Location(
             Bukkit.getWorld("world"), 0.5, 66, 45, 0, 0
+    );
+
+    /**
+     * The {@link Location} to teleport players to when leaving the world and entering the End.
+     */
+    private static final @NonNull Location worldToEndLocation = new Location(
+            Bukkit.getWorld("world_the_end"), 1, 66, 21, 136, 12.5F
+    );
+
+    /**
+     * The {@link Location} to spawn the Ender Dragon.
+     */
+    private static final @NonNull Location endDragonLocation = new Location(
+            Bukkit.getWorld("world_the_end"), 0, 64, -18, 1, 6
     );
 
     /**
@@ -83,15 +104,30 @@ public class PlayerListeners implements Listener {
      * @param event {@link PlayerPortalEvent}.
      */
     @EventHandler
-    public void onPlayerPortalUse(final @NonNull PlayerPortalEvent event) {
-        final @NonNull World world = event.getFrom().getWorld();
+    public void onPlayerPortalUse(final @NonNull PlayerChangedWorldEvent event) {
+        final @NonNull World world = event.getFrom();
+        final @NonNull Player player = event.getPlayer();
 
         final World.Environment environment = world.getEnvironment();
 
         if (environment == World.Environment.NETHER) {
-            event.setTo(netherToWorldLocation);
+            player.teleport(netherToWorldLocation);
         } else {
-            event.setTo(worldToNetherLocation);
+            final @NonNull World currentWorld = player.getWorld();
+
+            final World.Environment currentEnvironment = currentWorld.getEnvironment();
+
+            if (currentEnvironment == World.Environment.NORMAL) {
+                player.teleport(worldToNetherLocation);
+            } else if (currentEnvironment == World.Environment.THE_END) {
+                player.teleport(worldToEndLocation);
+
+                final @NonNull Collection<EnderDragon> dragons = endDragonLocation.getNearbyEntitiesByType(EnderDragon.class, 5, 5, 5);
+
+                if (dragons.isEmpty()) {
+                    endDragonLocation.getWorld().spawn(endDragonLocation, EnderDragon.class);
+                }
+            }
         }
     }
 
