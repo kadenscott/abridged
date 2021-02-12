@@ -51,7 +51,7 @@ public class PlayerListeners implements Listener {
     /**
      * The {@link Location} to spawn the Ender Dragon.
      */
-    private static final @NonNull Location endDragonLocation = new Location(
+    public static final @NonNull Location endDragonLocation = new Location(
             Bukkit.getWorld("world_the_end"), 0, 64, -18, 1, 6
     );
 
