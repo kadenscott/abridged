@@ -45,7 +45,6 @@ public class PlayerListeners implements Listener {
             MiniMessage.get().parse("<aqua>Talk in my Discord: <click:open_url:https://chat.ksc.sh><hover:show_text:'<gray>Click to open!</gray>'>https://chat.ksc.sh</hover></click></aqua>"),
             MiniMessage.get().parse("<aqua>Check out the source code: <click:open_url:https://github.com/kadenscott/abridged><hover:show_text:'<gray>Click to open!</gray>'>https://github.com/kadenscott/abridged</hover></click></aqua>"),
             MiniMessage.get().parse("<aqua>You're in the right place. Have fun!</aqua>"),
-
     };
 
     /**
