@@ -5,16 +5,34 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Listens on {@link org.bukkit.event.player.PlayerEvent}s.
  */
 public class PlayerListeners implements Listener {
+
+    /**
+     * The {@link Location} to teleport players to when leaving the world and entering the Nether.
+     */
+    private static final @NonNull Location worldToNetherLocation = new Location(
+            Bukkit.getWorld("world_nether"), 1.5, 65, 1.5, 41, 0
+    );
+
+    /**
+     * The {@link Location} to teleport players to when leaving the Nether and entering the world.
+     */
+    private static final @NonNull Location netherToWorldLocation = new Location(
+            Bukkit.getWorld("world"), 0.5, 66, 45, 0, 0
+    );
 
     /**
      * The MOTD to display upon joining.
@@ -52,6 +70,24 @@ public class PlayerListeners implements Listener {
 
         for (final @NonNull Component component : motd) {
             audience.sendMessage(component);
+        }
+    }
+
+    /**
+     * Controls where a player goes when using nether portals.
+     *
+     * @param event {@link PlayerPortalEvent}.
+     */
+    @EventHandler
+    public void onPlayerPortalUse(final @NonNull PlayerPortalEvent event) {
+        final @NonNull World world = event.getFrom().getWorld();
+
+        final World.Environment environment = world.getEnvironment();
+
+        if (environment == World.Environment.NETHER) {
+            event.setTo(netherToWorldLocation);
+        } else {
+            event.setTo(worldToNetherLocation);
         }
     }
 
